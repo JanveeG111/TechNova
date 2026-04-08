@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - StudySync</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="auth-page">
+
+  <!-- Background Animation -->
+  <div class="auth-bg">
+    <div class="gradient-bg"></div>
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="auth-container">
+    <div class="auth-card">
+      
+      <!-- Logo -->
+      <div class="auth-logo">
+        <span class="logo-icon">📚</span>
+        <h1>StudySync</h1>
+        <p>Join the learning community</p>
+      </div>
+
+      <!-- Form -->
+      <form id="registerForm" class="auth-form">
+        
+        <!-- Name Field -->
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            placeholder="Aapka naam kya hai?" 
+            required
+          >
+          <small class="error-text" id="nameError"></small>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="your@email.com" 
+            required
+          >
+          <small class="error-text" id="emailError"></small>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="6+ characters" 
+            required
+          >
+          <small class="error-text" id="passwordError"></small>
+        </div>
+
+        <!-- Location Field -->
+        <div class="form-group">
+          <label for="location">City/Location</label>
+          <input 
+            type="text" 
+            id="location" 
+            placeholder="Delhi, Mumbai, Bangalore..." 
+            required
+          >
+        </div>
+
+        <!-- Language Selection -->
+        <div class="form-group">
+          <label for="language">Preferred Language</label>
+          <select id="language" required>
+            <option value="">-- Select Language --</option>
+            <option value="Hindi">🇮🇳 Hindi</option>
+            <option value="English">🇬🇧 English</option>
+          </select>
+        </div>
+
+        <!-- Category Selection -->
+        <div class="form-group">
+          <label for="category">Exam Type</label>
+          <select id="category" required>
+            <option value="">-- Select Exam --</option>
+            <option value="JEE">🎯 JEE (Engineering)</option>
+            <option value="NEET">🏥 NEET (Medical)</option>
+            <option value="Board">📚 Board Exams</option>
+          </select>
+        </div>
+
+        <!-- Subject Selection -->
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" required>
+            <option value="">-- Select Subject --</option>
+            <option value="Maths">➕ Maths</option>
+            <option value="Physics">⚡ Physics</option>
+            <option value="Chemistry">🧪 Chemistry</option>
+            <option value="Biology">🧬 Biology</option>
+            <option value="English">📖 English</option>
+          </select>
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="form-group">
+          <label for="profilePic">Profile Picture (Optional)</label>
+          <div class="file-input-wrapper">
+            <input 
+              type="file" 
+              id="profilePic" 
+              accept="image/*"
+            >
+            <label for="profilePic" class="file-input-label">
+              📷 Choose Image
+            </label>
+            <span id="fileName" class="file-name">No file selected</span>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+          Create Account
+        </button>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner" style="display: none;"></div>
+
+      </form>
+
+      <!-- Login Link -->
+      <p class="auth-link">
+        Already have account? <a href="login.html">Login here</a>
+      </p>
+
+    </div>
+  </div>
+
+  <!-- Error/Success Message -->
+  <div id="messageBox" class="message-box"></div>
+
+  <!-- Script -->
+  <script type="module">
+    import { registerUser, redirectIfLoggedIn } from "../js/auth.js";
+
+    // Check if already logged in
+    redirectIfLoggedIn();
+
+    // Register Form Handler
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Get form values
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const location = document.getElementById("location").value;
+      const language = document.getElementById("language").value;
+      const category = document.getElementById("category").value;
+      const subject = document.getElementById("subject").value;
+      const profilePicFile = document.getElementById("profilePic").files[0];
+
+      // Validate
+      if (!name || !email || !password || !location || !language || !category || !subject) {
+        showMessage("❌ सभी fields भरो!", "error");
+        return;
+      }
+
+      // Show loading
+      document.getElementById("loadingSpinner").style.display = "block";
+      document.getElementById("registerBtn").disabled = true;
+
+      try {
+        // Call register function from auth.js
+        const result = await registerUser({
+          name,
+          email,
+          password,
+          location,
+          language,
+          category,
+          subject,
+          imageFile: profilePicFile
+        });
+
+        if (result.success) {
+          showMessage("✅ Account बनाया गया! Dashboard पर जा रहे हो...", "success");
+          setTimeout(() => {
+            window.location.href = "../dashboard/dashboard.html";
+          }, 1500);
+        } else {
+          showMessage("❌ Error: " + result.error, "error");
+          document.getElementById("loadingSpinner").style.display = "none";
+          document.getElementById("registerBtn").disabled = false;
+        }
+      } catch (err) {
+        showMessage("❌ कुछ गड़बड़ हुई: " + err.message, "error");
+        document.getElementById("loadingSpinner").style.display = "none";
+        document.getElementById("registerBtn").disabled = false;
+      }
+    });
+
+    // File input label update
+    document.getElementById("profilePic").addEventListener("change", (e) => {
+      const fileName = e.target.files[0]?.name || "No file selected";
+      document.getElementById("fileName").textContent = fileName;
+    });
+
+    // Show message function
+    function showMessage(message, type) {
+      const box = document.getElementById("messageBox");
+      box.textContent = message;
+      box.className = "message-box " + type;
+      box.style.display = "block";
+
+      if (type === "error") {
+        setTimeout(() => {
+          box.style.display = "none";
+        }, 5000);
+      }
+    }
+  </script>
+
+</body>
+</html>

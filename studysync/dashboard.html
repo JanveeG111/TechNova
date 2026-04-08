@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - StudySync</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-dashboard">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">StudySync</span>
+      </div>
+      <div class="nav-links">
+        <a href="#" class="nav-item" data-tab="matching">🔍 Find Partners</a>
+        <a href="#" class="nav-item" data-tab="groups">👥 Groups</a>
+        <a href="#" class="nav-item" data-tab="messages">💬 Messages</a>
+        <a href="#" class="nav-item" data-tab="ai">🤖 AI Doubt</a>
+        <a href="#" class="nav-item" data-tab="profile">👤 Profile</a>
+        <button id="logoutBtn" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR - User Profile Card -->
+    <aside class="sidebar">
+      <div class="profile-card">
+        <img id="profileImg" src="" alt="Profile" class="profile-avatar">
+        <h3 id="profileName">Loading...</h3>
+        <p id="profileSubject" class="profile-subject">Subject</p>
+        <p id="profileCategory" class="profile-category">Category</p>
+        <p id="profileLanguage" class="profile-language">Language</p>
+        <div class="profile-stats">
+          <div class="stat-small">
+            <div class="stat-value">5</div>
+            <div class="stat-label">Chats</div>
+          </div>
+          <div class="stat-small">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Groups</div>
+          </div>
+          <div class="stat-small">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Quizzes</div>
+          </div>
+        </div>
+        <button id="editProfileBtn" class="btn btn-secondary btn-block">✏️ Edit Profile</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
+
+      <!-- ===== TAB: FIND PARTNERS ===== -->
+      <section id="matching-tab" class="tab-content active">
+        <div class="section-header">
+          <h2>🔍 Find Study Partners</h2>
+          <p>People studying same subject as you</p>
+        </div>
+
+        <div id="matchingUsers" class="users-grid">
+          <!-- Users will be dynamically added here -->
+          <div class="loading-skeleton">Loading...</div>
+        </div>
+      </section>
+
+      <!-- ===== TAB: GROUPS ===== -->
+      <section id="groups-tab" class="tab-content">
+        <div class="section-header">
+          <h2>👥 Study Groups</h2>
+          <button id="createGroupBtn" class="btn btn-primary">+ Create Group</button>
+        </div>
+
+        <div id="groupsList" class="groups-list">
+          <!-- Groups will be dynamically added here -->
+          <div class="loading-skeleton">Loading...</div>
+        </div>
+
+        <!-- Create Group Modal -->
+        <div id="createGroupModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Create New Study Group</h3>
+            <form id="createGroupForm">
+              <div class="form-group">
+                <label>Group Name</label>
+                <input type="text" id="groupName" placeholder="e.g., JEE Maths Advanced" required>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea id="groupDesc" placeholder="What will you study together?" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Create Group</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TAB: MESSAGES ===== -->
+      <section id="messages-tab" class="tab-content">
+        <div class="section-header">
+          <h2>💬 Messages</h2>
+        </div>
+
+        <div class="messages-container">
+          <!-- Chat List -->
+          <div id="chatList" class="chat-list">
+            <!-- Active chats will be shown here -->
+            <div class="loading-skeleton">Loading conversations...</div>
+          </div>
+
+          <!-- Chat Window -->
+          <div id="chatWindow" class="chat-window" style="display: none;">
+            <div class="chat-header">
+              <button id="backBtn" class="btn-back">← Back</button>
+              <div class="chat-info">
+                <h3 id="chatName">Chat Name</h3>
+                <p id="chatStatus">online</p>
+              </div>
+            </div>
+            <div id="messagesArea" class="messages-area"></div>
+            <div class="chat-input">
+              <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Type your message..." 
+              >
+              <button id="sendBtn" class="btn-send">Send</button>
+              <input type="file" id="fileInput" style="display: none;">
+              <button type="button" id="fileBtn" class="btn-file">📎</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TAB: AI DOUBT SOLVER ===== -->
+      <section id="ai-tab" class="tab-content">
+        <div class="section-header">
+          <h2>🤖 AI Doubt Solver</h2>
+          <p>Ask any question, get instant answers</p>
+        </div>
+
+        <div class="ai-container">
+          <div id="aiChat" class="ai-messages">
+            <!-- Chat history will be shown here -->
+            <div class="ai-message ai-greeting">
+              <div class="message-content">
+                <p>👋 Hi! I'm your StudySync AI. Ask me anything about your studies!</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-input">
+            <input 
+              type="text" 
+              id="aiQuestion" 
+              placeholder="पूछो अपना doubts... या Ask your doubt..." 
+            >
+            <button id="aiSendBtn" class="btn-send">Ask</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== TAB: PROFILE ===== -->
+      <section id="profile-tab" class="tab-content">
+        <div class="section-header">
+          <h2>👤 My Profile</h2>
+        </div>
+
+        <div class="profile-full">
+          <div class="profile-header">
+            <img id="profileImgFull" src="" alt="Profile" class="profile-avatar-large">
+            <div class="profile-info">
+              <h2 id="profileNameFull">Name</h2>
+              <p id="profileEmailFull">email@example.com</p>
+              <p id="profileLocationFull">📍 City</p>
+            </div>
+          </div>
+
+          <div class="profile-details">
+            <h3>Preferences</h3>
+            <div class="detail-row">
+              <span>Subject:</span>
+              <strong id="profileSubjectFull">Maths</strong>
+            </div>
+            <div class="detail-row">
+              <span>Language:</span>
+              <strong id="profileLanguageFull">Hindi</strong>
+            </div>
+            <div class="detail-row">
+              <span>Exam Type:</span>
+              <strong id="profileCategoryFull">JEE</strong>
+            </div>
+            <div class="detail-row">
+              <span>Location:</span>
+              <strong id="profileLocationDetail">Delhi</strong>
+            </div>
+            <div class="detail-row">
+              <span>Joined:</span>
+              <strong id="profileJoinedFull">--</strong>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button id="editProfileBtnFull" class="btn btn-secondary">✏️ Edit Profile</button>
+            <button id="deleteAccountBtn" class="btn btn-danger">🗑️ Delete Account</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Error Message -->
+  <div id="messageBox" class="message-box"></div>
+
+  <!-- Script -->
+  <script type="module">
+    import { getCurrentUserProfile, logoutUser } from "../js/auth.js";
+    import { listenToMatchingUsers, listenToMatchingGroups } from "../js/matchmaking.js";
+    import { 
+      sendMessage, 
+      listenToMessages, 
+      getChatRoomId,
+      createGroup,
+      joinGroup,
+      listenGroupMessages
+    } from "../js/chat.js";
+    import { askAI } from "../js/ai.js";
+
+    // ===== PAGE INITIALIZATION =====
+    let currentUser = null;
+    let currentChatRoom = null;
+    let unsubscribeMessages = null;
+
+    // Load user profile
+    const loadProfile = async () => {
+      currentUser = await getCurrentUserProfile();
+      if (!currentUser) {
+        window.location.href = "../auth/login.html";
+        return;
+      }
+
+      // Update UI with user data
+      document.getElementById("profileName").textContent = currentUser.name;
+      document.getElementById("profileImgFull").src = currentUser.photoURL;
+      document.getElementById("profileImg").src = currentUser.photoURL;
+      document.getElementById("profileSubject").textContent = currentUser.subject;
+      document.getElementById("profileCategory").textContent = currentUser.category;
+      document.getElementById("profileLanguage").textContent = currentUser.language;
+      
+      document.getElementById("profileNameFull").textContent = currentUser.name;
+      document.getElementById("profileEmailFull").textContent = currentUser.email;
+      document.getElementById("profileLocationFull").textContent = "📍 " + currentUser.location;
+      document.getElementById("profileSubjectFull").textContent = currentUser.subject;
+      document.getElementById("profileLanguageFull").textContent = currentUser.language;
+      document.getElementById("profileCategoryFull").textContent = currentUser.category;
+      document.getElementById("profileLocationDetail").textContent = currentUser.location;
+
+      // Load matching users and groups
+      loadMatchingUsers();
+      loadMatchingGroups();
+    };
+
+    // Load matching users
+    const loadMatchingUsers = () => {
+      const container = document.getElementById("matchingUsers");
+      
+      listenToMatchingUsers(currentUser, (users) => {
+        container.innerHTML = "";
+        
+        if (users.length === 0) {
+          container.innerHTML = '<div class="empty-state">No matching users found</div>';
+          return;
+        }
+
+        users.forEach(user => {
+          const userCard = document.createElement("div");
+          userCard.className = "user-card";
+          userCard.innerHTML = `
+            <img src="${user.photoURL}" alt="Profile">
+            <h3>${user.name}</h3>
+            <p>${user.subject} • ${user.category}</p>
+            <p class="online-badge">🟢 Online</p>
+            <button class="btn btn-primary btn-block" onclick="openChat('${user.uid}', '${user.name}')">Chat</button>
+          `;
+          container.appendChild(userCard);
+        });
+      });
+    };
+
+    // Load matching groups
+    const loadMatchingGroups = () => {
+      const container = document.getElementById("groupsList");
+      
+      listenToMatchingGroups(currentUser, (groups) => {
+        container.innerHTML = "";
+        
+        if (groups.length === 0) {
+          container.innerHTML = '<div class="empty-state">No groups found. Create one!</div>';
+          return;
+        }
+
+        groups.forEach(group => {
+          const groupCard = document.createElement("div");
+          groupCard.className = "group-card";
+          groupCard.innerHTML = `
+            <h3>${group.name}</h3>
+            <p>${group.description}</p>
+            <p class="members">👥 ${group.memberCount} members</p>
+            <button class="btn btn-primary" onclick="joinGroupHandler('${group.id}')">Join Group</button>
+          `;
+          container.appendChild(groupCard);
+        });
+      });
+    };
+
+    // Tab switching
+    document.querySelectorAll(".nav-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        const tabName = item.dataset.tab;
+        
+        // Hide all tabs
+        document.querySelectorAll(".tab-content").forEach(tab => {
+          tab.classList.remove("active");
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName + "-tab").classList.add("active");
+        
+        // Highlight nav item
+        document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+        item.classList.add("active");
+      });
+    });
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      if (confirm("Logout करोगे?")) {
+        logoutUser();
+      }
+    });
+
+    // Create Group
+    document.getElementById("createGroupBtn").addEventListener("click", () => {
+      document.getElementById("createGroupModal").style.display = "block";
+    });
+
+    document.querySelector(".close").addEventListener("click", () => {
+      document.getElementById("createGroupModal").style.display = "none";
+    });
+
+    document.getElementById("createGroupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("groupName").value;
+      const description = document.getElementById("groupDesc").value;
+      
+      const groupId = await createGroup({ name, description });
+      if (groupId) {
+        showMessage("✅ Group created successfully!", "success");
+        document.getElementById("createGroupModal").style.display = "none";
+        loadMatchingGroups();
+      }
+    });
+
+    // Global functions for onclick handlers
+    window.openChat = (uid, name) => {
+      currentChatRoom = getChatRoomId(currentUser.uid, uid);
+      document.getElementById("chatName").textContent = name;
+      document.getElementById("chatList").style.display = "none";
+      document.getElementById("chatWindow").style.display = "block";
+
+      // Listen to messages
+      if (unsubscribeMessages) unsubscribeMessages();
+      unsubscribeMessages = listenToMessages(currentChatRoom, (messages) => {
+        const area = document.getElementById("messagesArea");
+        area.innerHTML = "";
+        messages.forEach(msg => {
+          const el = document.createElement("div");
+          el.className = msg.uid === currentUser.uid ? "message sent" : "message received";
+          el.innerHTML = `<strong>${msg.senderName}</strong><p>${msg.text}</p>`;
+          area.appendChild(el);
+        });
+        area.scrollTop = area.scrollHeight;
+      });
+    };
+
+    window.joinGroupHandler = async (groupId) => {
+      const result = await joinGroup(groupId);
+      if (result.success) {
+        showMessage("✅ Joined group!", "success");
+        loadMatchingGroups();
+      }
+    };
+
+    // Send message
+    document.getElementById("sendBtn").addEventListener("click", async () => {
+      const text = document.getElementById("messageInput").value;
+      if (text.trim() && currentChatRoom) {
+        await sendMessage(currentChatRoom, text);
+        document.getElementById("messageInput").value = "";
+      }
+    });
+
+    // Back button
+    document.getElementById("backBtn").addEventListener("click", () => {
+      document.getElementById("chatList").style.display = "block";
+      document.getElementById("chatWindow").style.display = "none";
+      if (unsubscribeMessages) unsubscribeMessages();
+    });
+
+    // AI Chat
+    document.getElementById("aiSendBtn").addEventListener("click", async () => {
+      const question = document.getElementById("aiQuestion").value;
+      if (!question.trim()) return;
+
+      const chatArea = document.getElementById("aiChat");
+      
+      // Add user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "ai-message user-message";
+      userMsg.innerHTML = `<div class="message-content"><p>${question}</p></div>`;
+      chatArea.appendChild(userMsg);
+
+      document.getElementById("aiQuestion").value = "";
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      // Get AI response
+      const response = await askAI(question);
+      
+      const aiMsg = document.createElement("div");
+      aiMsg.className = "ai-message ai-response";
+      aiMsg.innerHTML = `<div class="message-content"><p>${response}</p></div>`;
+      chatArea.appendChild(aiMsg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    });
+
+    function showMessage(message, type) {
+      const box = document.getElementById("messageBox");
+      box.textContent = message;
+      box.className = "message-box " + type;
+      box.style.display = "block";
+
+      if (type === "error") {
+        setTimeout(() => box.style.display = "none", 5000);
+      }
+    }
+
+    // Initialize
+    loadProfile();
+  </script>
+
+</body>
+</html>
